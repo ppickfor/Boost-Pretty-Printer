@@ -897,15 +897,17 @@ class BoostGregorianDate:
         if n==2**32-2:
             return '(%s) uninitialized' % self.typename
         # Convert date number to year-month-day
-        a = n + 32044
-        b = (4*a + 3) / 146097
-        c = a - (146097*b)/4
-        d = (4*c + 3)/1461
-        e = c - (1461*d)/4
-        m = (5*e + 2)/153
-        day = e + 1 - (153*m + 2)/5
-        month = m + 3 - 12*(m/10)
-        year = 100*b + d - 4800 + (m/10)
+        jd_i = n
+        l = jd_i + 68569
+        n = int((4 * l) / 146097.0)
+        l -= int(((146097 * n) + 3) / 4.0)
+        i = int((4000 * (l + 1)) / 1461001)
+        l -= int((1461 * i) / 4.0) - 31
+        j = int((80 * l) / 2447.0)
+        day = l - int((2447 * j) / 80.0)
+        l = int(j / 11.0)
+        month = j + 2 - (12 * l)
+        year = 100 * (n - 49) + i + l
         return '(%s) %4d-%02d-%02d' % (self.typename, year,month,day)
 
 @_register_printer
